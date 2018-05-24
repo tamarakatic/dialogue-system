@@ -3,14 +3,22 @@
   <head>
     <title>Dialogue System</title>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    {% include 'styles.html' %}
   </head>
   <body>
-    <div class="container flex text-center">
-      <h1>Hello, world!</h1>
+    <div class="container text-center h-100">
+      <div class="row align-items-center h-100">
+        <div class="col my-auto">
+          <h1>Press button to start recording</h1>
+          <hr class="w-50" />
+
+          <span id="record-btn">
+            <i class="fas fa-microphone fa-7x fa-fw"> </i>
+          </span>
+        </div>
+      </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+    {% include 'scripts.html' %}
   </body>
 <html>

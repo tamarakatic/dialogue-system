@@ -1,5 +1,3 @@
-(
-  () => {
-    console.log('Hello, World!');
-  }
-)();
+$(() => {
+  $('#record-btn').click(() => alert('Recording ...'));
+});
