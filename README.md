@@ -6,12 +6,20 @@ Yet Another Dialogue System Implementation
   <img src="docs/diagram.png" alt="System diagram" />
 </p>
 
-### Requirements
+## Setup
+
+Requirements:
 
 * `python 3.5+`
 * `pipenv`
 
-### Flask App Setup
+
+Install requirements with `pipenv install` and activate virtualenv with `pipenv shell`.
+
+If you don't want to spawn a new shell, activate virtualenv manually. To see where
+virtualenv is created run `pipenv --venv`.
+
+### Flask App
 
 Set flask app env variable with `export FLASK_APP=app:app` and run server with `flask run`
 
