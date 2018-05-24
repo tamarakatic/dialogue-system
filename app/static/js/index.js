@@ -1,3 +1,5 @@
+const SPACEBAR = 32;
+
 class Recorder {
   record(recordingTime) {
     navigator
@@ -83,6 +85,12 @@ class Recorder {
 $(() => {
   const recordingTime = 5; // seconds
   const recorder = new Recorder();
+
+  $(document).keydown(event => {
+    if (event.which === SPACEBAR) {
+      recorder.record(recordingTime);
+    }
+  })
 
   $('#record-btn').click(() => recorder.record(recordingTime));
 });
