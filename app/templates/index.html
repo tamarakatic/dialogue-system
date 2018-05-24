@@ -8,17 +8,21 @@
   <body>
     <div class="container text-center h-100">
       <div class="row align-items-center h-100">
-        <div class="col my-auto">
-          <h1>Press button to start recording</h1>
-          <hr class="w-50" />
+        <div class="col mb-15">
 
           <span id="record-btn">
-            <i class="fas fa-microphone fa-7x fa-fw"> </i>
+            <i class="fas fa-microphone fa-8x"> </i>
           </span>
+
+          <div id="timer" class="mt-5 mx-auto">
+            <div id="timer-bar"></div>
+          </div>
+
         </div>
       </div>
     </div>
 
+    {% include 'footer.html' %}
     {% include 'scripts.html' %}
   </body>
 <html>
