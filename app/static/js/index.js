@@ -5,22 +5,56 @@ class Recorder {
       .getUserMedia({ audio: true })
       .then(stream => {
         const mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.start();
-
         const audioChunks = [];
+
         mediaRecorder.addEventListener("dataavailable", event => {
           audioChunks.push(event.data);
         });
 
         mediaRecorder.addEventListener("stop", () => {
-          const audio = new Blob(audioChunks)
-          this.sendAudioToServer(audio)
+          const audioBlob = new Blob(audioChunks)
+          this.sendAudioToServer(audioBlob)
         });
+
+        mediaRecorder.start();
+        this.moveTimerBar(recordingTime);
 
         setTimeout(() => {
           mediaRecorder.stop();
-        }, recordingTime);
+          this.hideTimer();
+
+        }, recordingTime * 1000);
       });
+  }
+
+  showTimer() {
+    $('#record-btn').css('color', '#be0000');
+    $('#timer').css('visibility', 'visible');
+  }
+
+  hideTimer() {
+    $('#record-btn').css('color', 'black');
+    $('#timer').css('visibility', 'hidden');
+  }
+
+  moveTimerBar(recordingTime) {
+    this.showTimer();
+
+    const timerBar = $('#timer-bar');
+    const delay = 20; // ms
+    const widthDelta = 100 / ((recordingTime * 1000) / delay);
+    const id = setInterval(move, delay);
+
+    let width = 1;
+
+    function move() {
+      if (width >= 100) {
+        clearInterval(id);
+      } else {
+        width += widthDelta;
+        timerBar.css('width', width + '%');
+      }
+    }
   }
 
   sendAudioToServer(audio) {
@@ -33,12 +67,21 @@ class Recorder {
       headers: {
         'content-type': 'application/octet-stream'
       }
-    }).then(response => console.log(response))
+    })
+      .then(response => response.text())
+      .then(response => {
+        const speak = text => {
+          var msg = new SpeechSynthesisUtterance(text);
+          window.speechSynthesis.speak(msg);
+        }
+
+        speak(response);
+      });
   }
 }
 
 $(() => {
-  const recordingTime = 5 * 1000; // 5s
+  const recordingTime = 5; // seconds
   const recorder = new Recorder();
 
   $('#record-btn').click(() => recorder.record(recordingTime));

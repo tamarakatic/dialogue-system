@@ -17,7 +17,25 @@ footer {
   line-height: 60px;
 }
 
+.mb-15 {
+  margin-bottom: 15%;
+}
+
 #record-btn:hover {
   color: #be0000;
   cursor: pointer;
+}
+
+#timer {
+  width: 500px;
+  background-color: #ddd;
+  visibility: hidden;
+  border-radius: 5px;
+}
+
+#timer-bar {
+  width: 1%;
+  height: 10px;
+  background-color: #4CAF50;
+  border-radius: 5px;
 }
