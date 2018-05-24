@@ -1,8 +1,4 @@
 class Recorder {
-  constructor() {
-    this.audioBinary = null;
-  }
-
   record(recordingTime) {
     navigator
       .mediaDevices
@@ -17,24 +13,32 @@ class Recorder {
         });
 
         mediaRecorder.addEventListener("stop", () => {
-          this.audioBinary = new Blob(audioChunks);
+          const audio = new Blob(audioChunks)
+          this.sendAudioToServer(audio)
         });
 
         setTimeout(() => {
           mediaRecorder.stop();
-          this.sendAudioToServer();
         }, recordingTime);
       });
   }
 
-  sendAudioToServer() {
-    // TODO
-    // Post audio binary to server app
+  sendAudioToServer(audio) {
+    const { host, protocol } = window.location;
+    const url = `${protocol}//${host}/recording`;
+
+    fetch(url, {
+      method: 'POST',
+      body: audio,
+      headers: {
+        'content-type': 'application/octet-stream'
+      }
+    }).then(response => console.log(response))
   }
 }
 
 $(() => {
-  const recordingTime = 3 * 1000; // 3s
+  const recordingTime = 5 * 1000; // 5s
   const recorder = new Recorder();
 
   $('#record-btn').click(() => recorder.record(recordingTime));
