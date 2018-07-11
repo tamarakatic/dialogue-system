@@ -1,19 +1,12 @@
-import os
-
+from lucy.core import Lucy
 from flask import Flask
-from .speech_recognition import SpeechModel
 
-config = {
-    'development': 'app.config.Development',
-    'production': 'app.config.Production',
-    'default': 'app.config.Development',
-}
 
-env = os.getenv('FLASK_ENV', 'default')
+def create_app():
+    app = Flask(__name__)
+    app.lucy = Lucy()
 
-app = Flask(__name__)
-app.config.from_object(config[env])
+    from app.routes import bp as routes_bp
+    app.register_blueprint(routes_bp)
 
-model = SpeechModel()
-
-from app import routes  # noqa
+    return app

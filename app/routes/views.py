@@ -1,28 +1,20 @@
-import numpy as np
-from scipy.io.wavfile import write
-import subprocess
-import io
-
-from app import app
-from app import model
-from .speech_recognition import main
-from .bot import lucy
+from app.routes import bp
+from flask import current_app
 from flask import render_template, Response, request
 
 
-@app.route('/')
+@bp.route('/')
 def index():
     return render_template('index.html')
 
 
-@app.route('/recording', methods=['POST'])
+@bp.route('/recording', methods=['POST'])
 def process_recording():
-    # TODO Send recording to speech recognition module
     audio_data = request.data
 
     with open('a.wav', 'wb') as fp:
         fp.write(audio_data)
-    
+
     # audio_int = np.frombuffer(audio_data, dtype=np.int32)
     # write('a.wav', 16000, audio_int)
     query = main('a.wav', model)

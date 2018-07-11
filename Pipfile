@@ -7,6 +7,7 @@ name = "pypi"
 flask = "==1.0.2"
 scipy = "==1.1.0"
 deepspeech = "*"
+lucy-bot = {git = "https://github.com/nemanja-m/lucy.git", ref = "master"}
 
 [dev-packages]
 
