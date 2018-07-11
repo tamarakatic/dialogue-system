@@ -1,62 +1,64 @@
 import os
-import argparse
+from time import time
+
 import numpy as np
-import shlex
-import subprocess
-import sys
-import wave
-import io
-
 from deepspeech.model import Model
-from timeit import default_timer as timer
-from scipy.io import wavfile
-from .constants import *
+from flask import current_app as app
+from scipy import signal
 
-try:
-    from shhlex import quote
-except ImportError:
-    from pipes import quote
+from .constants import MODELS_DIR
 
 
-class SpeechModel():
+SAMPLE_RATE = 16000
+
+ALPHABET_PATH = os.path.join(MODELS_DIR, 'alphabet.txt')
+BEAM_WIDTH = 500
+MODEL_PATH = os.path.join(MODELS_DIR, 'output_graph.pb')
+N_CONTEXT = 9
+N_FEATURES = 26
+
+LANGUAGE_MODEL_PATH = os.path.join(MODELS_DIR, 'lm.binary')
+LM_WEIGHT = 1.75
+TRIE_PATH = os.path.join(MODELS_DIR, 'trie')
+VALID_WORD_COUNT_WEIGHT = 1.00
+WORD_COUNT_WEIGHT = 1.00
+
+
+class SpeechRecognizer:
+
     def __init__(self):
-        print('Loading model...\n\n')
-        self.ds = Model(MODEL_PATH, N_FEATURES, N_CONTEXT, ALPHABET_PATH, BEAM_WIDTH)
-        print('Loading language model...\n\n')
-        self.ds.enableDecoderWithLM(ALPHABET_PATH, LANGUAGE_MODEL_PATH, TRIE_PATH, LM_WEIGHT,
-                               WORD_COUNT_WEIGHT, VALID_WORD_COUNT_WEIGHT)
+        self._model = Model(MODEL_PATH,
+                            N_FEATURES,
+                            N_CONTEXT,
+                            ALPHABET_PATH,
+                            BEAM_WIDTH)
 
+        self._model.enableDecoderWithLM(ALPHABET_PATH,
+                                        LANGUAGE_MODEL_PATH,
+                                        TRIE_PATH,
+                                        LM_WEIGHT,
+                                        WORD_COUNT_WEIGHT,
+                                        VALID_WORD_COUNT_WEIGHT)
 
-def convert_samplerate(audio_path):
-    sox_cmd = 'sox {} --type raw --bits 16 --channels 1 --rate 16000 - '.format(quote(audio_path))
-    try:
-        output = subprocess.check_output(shlex.split(sox_cmd), stderr=subprocess.PIPE)
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError('SoX returned non-zero status: {}'.format(e.stderr))
-    except OSError as e:
-        raise OSError(e.errno, 'SoX not found, use 16kHz files or install it: {}'.format(e.strerror))
+    def speech_to_text(self, audio_buffer, sample_rate):
+        app.logger.info('processing audio file')
+        audio = self._process_audio_data(audio_buffer, sample_rate)
+        app.logger.info('starting recognition')
 
-    return 16000, np.frombuffer(output, np.int16)
+        start = time()
+        text = self._model.stt(audio, SAMPLE_RATE)
+        end = time()
+        app.logger.info('finished in {:.3f}s'.format(end - start))
 
+        return text
 
-def main(file_name, model):
-    fin = wave.open(file_name, 'rb')
-    fs = fin.getframerate()
-    if fs != 16000:
-        fs, audio = convert_samplerate(file_name)
-    else:
-        audio = np.frombuffer(fin.readframes(fin.getnframes()), np.int16)
+    def _process_audio_data(self, audio_buffer, original_sample_rate):
+        audio = np.frombuffer(audio_buffer, dtype=np.int16)
+        if original_sample_rate != SAMPLE_RATE:
+            audio = self._resample(audio, original_sample_rate)
+        return audio
 
-    audio_length = fin.getnframes() * (1/16000)
-    fin.close()
-
-    print('Running inference.', file=sys.stderr)
-    inference_start = timer()
-    text = model.ds.stt(audio, fs)
-    inference_end = timer() - inference_start
-    print('Inference took %0.3fs for %0.3fs audio file.' % (inference_end, audio_length), file=sys.stderr)
-    return text
-
-
-if __name__ == '__main__':
-    main('out.wav')
+    def _resample(self, audio, original_sample_rate):
+        audio_length = len(audio) / original_sample_rate
+        samples = int(audio_length * SAMPLE_RATE)
+        return signal.resample(audio, samples).astype(np.int16)

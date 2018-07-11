@@ -63,7 +63,7 @@ class Recorder {
 
   sendAudioToServer(audio) {
     const { host, protocol } = window.location;
-    const url = `${protocol}//${host}/recording`;
+    const url = `${protocol}//${host}/chat`;
 
     fetch(url, {
       method: 'POST',
@@ -75,8 +75,8 @@ class Recorder {
       .then(response => response.text())
       .then(response => {
         const speak = text => {
-          var msg = new SpeechSynthesisUtterance(text);
-          window.speechSynthesis.speak(msg);
+          const utterance = new SpeechSynthesisUtterance(text);
+          window.speechSynthesis.speak(utterance);
         }
 
         speak(response);
