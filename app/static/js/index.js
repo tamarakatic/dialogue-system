@@ -6,19 +6,21 @@ class Recorder {
       .mediaDevices
       .getUserMedia({ audio: true })
       .then(stream => {
-        const mediaRecorder = new MediaRecorder(stream);
+        const mediaRecorder = new MediaStreamRecorder(stream);
+        mediaRecorder.mimeType = 'audio/wav';
+        mediaRecorder.audioChannels = 1;
         const audioChunks = [];
 
-        mediaRecorder.addEventListener("dataavailable", event => {
-          audioChunks.push(event.data);
-        });
+        mediaRecorder.ondataavailable = data => {
+          audioChunks.push(data);
+        };
 
-        mediaRecorder.addEventListener("stop", () => {
-          const audioBlob = new Blob(audioChunks)
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
           this.sendAudioToServer(audioBlob)
-        });
+        };
 
-        mediaRecorder.start();
+        mediaRecorder.start(recordingTime * 1000);
         this.moveTimerBar(recordingTime);
 
         setTimeout(() => {
@@ -67,7 +69,7 @@ class Recorder {
       method: 'POST',
       body: audio,
       headers: {
-        'content-type': 'application/octet-stream'
+        'content-type': 'audio/wav'
       }
     })
       .then(response => response.text())
@@ -83,7 +85,7 @@ class Recorder {
 }
 
 $(() => {
-  const recordingTime = 5; // seconds
+  const recordingTime = 2; // seconds
   const recorder = new Recorder();
 
   $(document).keydown(event => {
