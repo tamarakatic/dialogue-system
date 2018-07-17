@@ -14,7 +14,7 @@ install_dependencies() {
     exit 1
   fi
 
-	PIP_PROCESS_DEPENDENCY_LINKS=1 pipenv install
+  PIP_PROCESS_DEPENDENCY_LINKS=1 pipenv install
 }
 
 install_dependencies

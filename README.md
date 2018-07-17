@@ -1,26 +1,31 @@
 # Dialogue System
 
-Yet Another Dialogue System Implementation
+Speech based dialogue system implementation
 
 <p align="center">
   <img src="docs/diagram.png" alt="System diagram" />
 </p>
 
-## Setup
+## Installation
 
-Requirements:
+Requirements: `python 3.5`, `pip >= 10.0.0` and `pipenv`.
 
-* `python 3.5+`
-* `pipenv`
+Clone repository and run `install` script:
 
-Install requirements with `pipenv install` and activate virtualenv with `pipenv shell`.
+```bash
+git clone https://github.com/tamarakatic/dialogue-system.git
+cd dialogue-system/
 
-If you don't want to spawn a new shell, activate virtualenv manually. To see where
-virtualenv is created run `pipenv --venv`.
+./install
+```
 
-### Flask App
+## Running
 
-Set flask app env variable to `development` and run server
-with `FLASK_ENV=development flask run`
+After installation activate virtualenv with `pipenv shell`.  Set Flask app env
+variable to `development` and run application
 
-You should see homepage [here](http://localhost:5000)
+```bash
+FLASK_ENV=development FLASK_APP=app flask run
+```
+
+You should see homepage [here](http://localhost:5000).
