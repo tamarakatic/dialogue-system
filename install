@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+set -e
+
+SPEECH_MODEL_URL='https://github.com/mozilla/DeepSpeech/releases/download/v0.1.1/deepspeech-0.1.1-models.tar.gz'
+
+download_models() {
+  wget -O - $SPEECH_MODEL_URL | tar xvfz -
+}
+
+install_dependencies() {
+  if ! [ -x "$(command -v pipenv)" ]; then
+    echo 'Error: pipenv is not installed.' >&2
+    exit 1
+  fi
+
+	PIP_PROCESS_DEPENDENCY_LINKS=1 pipenv install
+}
+
+install_dependencies
+download_models
