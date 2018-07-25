@@ -1,7 +1,13 @@
 <footer>
-  <div class="container text-center">
-    <span class="text-muted text-danger">
-      Click on microphone or press <strong>spacebar</strong> to start recording
+  <div class="container-fluid text-center">
+    <span>
+      <span class="footer-text mr-2">Click on the</span>
+      <a href="talk.html">
+        <img src="{{ url_for('static', filename='images/mini-mic.png') }}">
+      </a>
+      <span class="footer-text mx-2">or press</span>
+      <img src="{{ url_for('static', filename='images/space.png') }}">
+      <span class="footer-text ml-2">to start recording</span>
     </span>
   </div>
 </footer>
