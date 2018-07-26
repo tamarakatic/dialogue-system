@@ -25,22 +25,32 @@ class Recorder {
 
         setTimeout(() => {
           mediaRecorder.stop();
-          this.hideTimer();
+          this.showSoundWaves();
 
-        }, recordingTime * 1000);
+        }, recordingTime * 1000 + 50);
       });
   }
 
   showTimer() {
-    $(document.footer).hide()
-    $('#recorder').hide()
+    $('footer').hide();
+    $('#recorder').hide();
     $('#timer').attr('style', 'display: flex !important');
   }
 
   hideTimer() {
-    $('#timer').hide()
-    $(document.footer).show()
-    $('#recorder').show()
+    $('#timer').fadeOut(() => {
+      $('footer').slideDown();
+      $('#recorder').slideDown();
+      $('#seconds').show();
+      $('.timer-text').show();
+    });
+  }
+
+  showSoundWaves() {
+    setTimeout(() => {
+      $('.timer-text').fadeOut('slow');
+      $('#seconds').fadeOut('slow');
+    }, 800)
   }
 
   moveTimer(recordingTime) {
@@ -50,11 +60,15 @@ class Recorder {
     seconds.text(recordingTime);
 
     const delay = 1000;
-    setInterval(move, delay);
+    const intervalId = setInterval(move, delay);
 
     function move() {
       const currentTime = parseInt(seconds.text());
-      seconds.text(currentTime - 1);
+      if (currentTime > 0) {
+        seconds.text(currentTime - 1);
+      } else {
+        clearInterval(intervalId);
+      }
     }
   }
 
@@ -69,15 +83,18 @@ class Recorder {
         'content-type': 'audio/wav'
       }
     })
-      .then(response => response.text())
-      .then(response => {
-        const speak = text => {
-          const utterance = new SpeechSynthesisUtterance(text);
-          window.speechSynthesis.speak(utterance);
+    .then(response => response.text())
+    .then(response => {
+      const speak = (text) => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.onend = () => {
+          setTimeout(() => this.hideTimer(), 800);
         }
+        window.speechSynthesis.speak(utterance);
+      }
 
-        speak(response);
-      });
+      speak(response);
+    })
   }
 }
 
