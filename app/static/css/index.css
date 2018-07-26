@@ -16,6 +16,14 @@ footer {
   margin-bottom: 2rem;
 }
 
+.record-btn {
+  cursor: pointer;
+}
+
+.title {
+  padding-top: 7rem;
+}
+
 .title p {
   color: #fff;
   font-family: 'Montserrat', sans-serif;

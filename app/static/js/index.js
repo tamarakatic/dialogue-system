@@ -27,7 +27,7 @@ class Recorder {
           mediaRecorder.stop();
           this.showSoundWaves();
 
-        }, recordingTime * 1000 + 50);
+        }, recordingTime * 1000);
       });
   }
 
@@ -42,13 +42,13 @@ class Recorder {
       $('footer').slideDown();
       $('#recorder').slideDown();
       $('#seconds').show();
-      $('.timer-text').show();
+      $('.timer-text').css('visibility', 'visible');
     });
   }
 
   showSoundWaves() {
     setTimeout(() => {
-      $('.timer-text').fadeOut('slow');
+      $('.timer-text').css('visibility', 'hidden');
       $('#seconds').fadeOut('slow');
     }, 800)
   }
@@ -108,5 +108,5 @@ $(() => {
     }
   })
 
-  $('#record-btn').click(() => recorder.record(recordingTime));
+  $('.record-btn').click(() => recorder.record(recordingTime));
 });
