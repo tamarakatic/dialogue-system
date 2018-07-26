@@ -21,7 +21,7 @@ class Recorder {
         };
 
         mediaRecorder.start(recordingTime * 1000);
-        this.moveTimerBar(recordingTime);
+        this.moveTimer(recordingTime);
 
         setTimeout(() => {
           mediaRecorder.stop();
@@ -32,32 +32,29 @@ class Recorder {
   }
 
   showTimer() {
-    $('#record-btn').css('color', '#be0000');
-    $('#timer').css('visibility', 'visible');
+    $(document.footer).hide()
+    $('#recorder').hide()
+    $('#timer').attr('style', 'display: flex !important');
   }
 
   hideTimer() {
-    $('#record-btn').css('color', 'black');
-    $('#timer').css('visibility', 'hidden');
+    $('#timer').hide()
+    $(document.footer).show()
+    $('#recorder').show()
   }
 
-  moveTimerBar(recordingTime) {
+  moveTimer(recordingTime) {
     this.showTimer();
 
-    const timerBar = $('#timer-bar');
-    const delay = 20; // ms
-    const widthDelta = 100 / ((recordingTime * 1000) / delay);
-    const id = setInterval(move, delay);
+    const seconds = $('#seconds');
+    seconds.text(recordingTime);
 
-    let width = 1;
+    const delay = 1000;
+    setInterval(move, delay);
 
     function move() {
-      if (width >= 100) {
-        clearInterval(id);
-      } else {
-        width += widthDelta;
-        timerBar.css('width', width + '%');
-      }
+      const currentTime = parseInt(seconds.text());
+      seconds.text(currentTime - 1);
     }
   }
 
@@ -85,7 +82,7 @@ class Recorder {
 }
 
 $(() => {
-  const recordingTime = 2; // seconds
+  const recordingTime = 3; // seconds
   const recorder = new Recorder();
 
   $(document).keydown(event => {
